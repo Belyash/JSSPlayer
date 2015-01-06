@@ -10,7 +10,7 @@ Use [RequireJS](http://requirejs.org/) to load JSSPlayer.
 ##How to use
 
 <pre>
-require(["audioplayer"], function($, audioplayer) {
+require(["audioplayer"], function(audioplayer) {
 
 	// Start playback
 	audioplayer.play("http://path/to/file.mp3");
