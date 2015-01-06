@@ -4,6 +4,31 @@ define(function (require) {
         player,
         status = 0;
 
+    function secToTimeCode (time) {
+    	var parsedTime = [
+    			Math.floor(time / 3600) % 24,
+            	Math.floor(time / 60) % 60,
+            	Math.floor(time % 60)
+        	],
+        	i,
+            response = "";
+
+        for (i = 0; i < parsedTime.length; i += 1) {
+        	if (i !== 0 || parsedTime[i] !== 0) {
+	        	if (parsedTime[i] < 10 && response !== "") {
+	    			response += "0" + parsedTime[i];
+	        	} else {
+	        		response += parsedTime[i];
+	        	}
+	        	if (i < parsedTime.length - 1) {
+	        		response += ":";
+	        	}
+        	}
+        }
+
+        return response || "00:00";
+    }
+
     player = {
         play: function (source) {
 
@@ -36,7 +61,11 @@ define(function (require) {
             
             return {
     			current: audioTag.currentTime,
-    			duration: audioTag.duration
+    			duration: audioTag.duration,
+    			parsed: {
+    				current: secToTimeCode(audioTag.currentTime),
+    				duration: secToTimeCode(audioTag.duration)
+    			}
     		};
         },
         onPlay: function (time) {
@@ -58,16 +87,16 @@ define(function (require) {
 
     audioTag.addEventListener("play", function () {
     	status = 2;
-    	player.onPlay(audioTag.currentTime);
+    	player.onPlay(player.time());
     });
 
     audioTag.addEventListener("pause", function () {
     	status = 1;
-    	player.onPause(audioTag.currentTime);
+    	player.onPause(player.time());
     });
 
     audioTag.addEventListener("timeupdate", function () {
-        player.onTimeupdate(this.currentTime, audioTag.duration);
+        player.onTimeupdate(player.time());
     });
 
     audioTag.addEventListener("ended", function () {
@@ -99,7 +128,7 @@ define(function (require) {
             break;
         }
 
-        player.onError(text, e);
+        player.onError(text, e.target.error);
     }, true);
 
     return player;

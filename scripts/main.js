@@ -4,17 +4,27 @@ require(["jquery", "audioplayer", "bootstrap"], function($, audioplayer) {
 
     	var $play = $("#play"),
 	    	$playlist = $("#playlist"),
-	    	$progress = $("#progress");
+	    	$progress = $("#progress"),
+	    	$progressBar = $progress.find(".progress-bar"),
+	    	$timebox = $('<span class="badge">');
 
-    	function selectTrack ($el) {
+    	function toggleTrack ($el) {
 			var title = $el.text(),
 				source = $el.attr("href");
 
-			$playlist.find(".active").removeClass("active");
-			$el.addClass("active");
-
-			audioplayer.play(source);
-			$progress.text(title);
+			if (audioplayer.status() === 2 && $el.hasClass("active")) {
+				audioplayer.pause();
+			} else {
+				if ($el.hasClass("active")) {
+					audioplayer.play();
+				} else {
+					audioplayer.play(source);
+					$playlist.find(".active").removeClass("active");
+					$el.addClass("active");
+					$timebox.text("--:-- / --:--");
+					$el.append($timebox);
+				}
+			}
 		}
 
 		$play.on("click", function () {
@@ -24,19 +34,30 @@ require(["jquery", "audioplayer", "bootstrap"], function($, audioplayer) {
 			// if played
 			if (status === 2) {
 				audioplayer.pause();
-			// if track is loaded
+			// if track was loaded
 			} else if (status === 1) {
 				audioplayer.play();
-			// if not loaded track
+			// if track was not loaded
 			} else {
-				selectTrack($playlist.find("a:first"));
+				toggleTrack($playlist.find("a:first"));
 			}
 
+		});
+
+		$progress.on("click", function (e) {
+			var time = 0,
+		 		$this = $(this);
+
+		 	time = audioplayer.time().duration * e.offsetX / $this.width();
+
+		 	audioplayer.time(time);
+
+			return false;
 		});
 	    
 	    $playlist.on("click", "a", function () {
 
-	    	selectTrack($(this));
+    		toggleTrack($(this));
 	    	
 	    	return false;
 	    });
@@ -49,9 +70,10 @@ require(["jquery", "audioplayer", "bootstrap"], function($, audioplayer) {
 	    	$play.removeClass("played");
 	    };
 
-	    audioplayer.onTimeupdate = function (time, duration) {
-	    	$progress.css({
-	    		width: time / duration * 100 + "%"
+	    audioplayer.onTimeupdate = function (time) {
+	    	$timebox.text(time.parsed.current + " / " + time.parsed.duration);
+	    	$progressBar.css({
+	    		width: time.current / time.duration * 100 + "%"
 	    	});
 	    };
 
@@ -60,7 +82,7 @@ require(["jquery", "audioplayer", "bootstrap"], function($, audioplayer) {
 	    		$next = $current.next();
 
 	    	if ($next.length) {
-	    		selectTrack($next);
+	    		toggleTrack($next);
 	    	}
 	    };
     });
