@@ -5,25 +5,25 @@ define(function (require) {
         status = 0;
 
     function secToTimeCode (time) {
-    	var parsedTime = [
-    			Math.floor(time / 3600) % 24,
-            	Math.floor(time / 60) % 60,
-            	Math.floor(time % 60)
-        	],
-        	i,
+        var parsedTime = [
+                Math.floor(time / 3600) % 24,
+                Math.floor(time / 60) % 60,
+                Math.floor(time % 60)
+            ],
+            i,
             response = "";
 
         for (i = 0; i < parsedTime.length; i += 1) {
-        	if (i !== 0 || parsedTime[i] !== 0) {
-	        	if (parsedTime[i] < 10 && response !== "") {
-	    			response += "0" + parsedTime[i];
-	        	} else {
-	        		response += parsedTime[i];
-	        	}
-	        	if (i < parsedTime.length - 1) {
-	        		response += ":";
-	        	}
-        	}
+            if (i !== 0 || parsedTime[i] !== 0) {
+                if (parsedTime[i] < 10 && response !== "") {
+                    response += "0" + parsedTime[i];
+                } else {
+                    response += parsedTime[i];
+                }
+                if (i < parsedTime.length - 1) {
+                    response += ":";
+                }
+            }
         }
 
         return response || "00:00";
