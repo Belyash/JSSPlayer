@@ -16,7 +16,13 @@
 			display: block;
 		}
 		.progress {
+			cursor: pointer;
 			white-space: nowrap;
+		}
+		.progress-bar {
+			-webkit-transition: none !important;
+			-o-transition: none !important;
+			transition: none !important;
 		}
 	</style>
 </head>
@@ -44,13 +50,8 @@
 		<div class="jumbotron m-bgimage">
 			<h1>JSSPlayer <small>— simple audio player</small></h1>
 			<p>JavaScript Simple Audio Player</p>
-			<div class="progress">
-  				<div class="progress-bar progress-bar-success" 
-  					id="progress"
-  					role="progressbar" 
-  					aria-valuenow="40" 
-  					aria-valuemin="0" 
-  					aria-valuemax="100">
+			<div class="progress" id="progress">
+  				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100">
     				<span class="sr-only">40% Complete (success)</span>
   				</div>
 			</div>
